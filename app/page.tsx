@@ -18,11 +18,13 @@ export default function AboutPage() {
         <div className="animate-fade-in">
           <div id="profile" className="flex flex-col md:flex-row gap-8 mb-8">
             <div className="w-full md:w-1/3 flex justify-center">
-              <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-primary">
+              <div className="relative w-60 h-60 rounded-full overflow-hidden border-4 border-primary">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary opacity-20"></div>
-                <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-primary">
-                  AKG
-                </div>
+                <img 
+                  src="/profilepic.jpg"
+                  alt="Ayush Kumar Ghosh"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
             <div className="w-full md:w-2/3">
@@ -67,8 +69,10 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              <Button className="mt-2">
-                <Download className="mr-2 h-4 w-4" /> Download Resume
+              <Button asChild className="mt-2">
+                <a href="/Ayush Kumar Ghosh - Software Developer.pdf" download>
+                  <Download className="mr-2 h-4 w-4" /> Download Resume
+                </a>
               </Button>
             </div>
           </div>
