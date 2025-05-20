@@ -78,7 +78,7 @@ export default function ProjectsPage() {
                   An advanced web scraping tool that uses AI to extract product data from various e-commerce websites. It handles website navigation, data extraction, and processing automatically.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {["Python", "BeautifulSoup", "NER", "Machine Learning"].map((tech) => (
+                  {["Python", "BeautifulSoup", "Gemini API"].map((tech) => (
                     <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                       {tech}
                     </Badge>
@@ -104,7 +104,7 @@ export default function ProjectsPage() {
                   A minimalist application for tracking daily habits and building consistent routines. Features include streak tracking, data visualization, and progress analytics.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {["React", "TypeScript", "Local Storage", "Chart.js"].map((tech) => (
+                  {["React", "TypeScript"].map((tech) => (
                     <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                       {tech}
                     </Badge>
@@ -156,7 +156,7 @@ export default function ProjectsPage() {
                   A drag-and-drop task management system based on the Kanban methodology. Helps visualize workflow, limit work-in-progress, and maximize efficiency.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {["React", "Redux", "DnD", "Local Storage"].map((tech) => (
+                  {["React", "Redux"].map((tech) => (
                     <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                       {tech}
                     </Badge>
@@ -182,7 +182,7 @@ export default function ProjectsPage() {
                   An application to track and split expenses among friends or roommates. Calculates who owes whom and simplifies debt settlement.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {["React Native", "Firebase", "Authentication", "Cloud Functions"].map((tech) => (
+                  {["React Native", "Firebase"].map((tech) => (
                     <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                       {tech}
                     </Badge>
@@ -208,7 +208,7 @@ export default function ProjectsPage() {
                   A smart daily planner that uses AI to optimize your schedule, suggest task prioritization, and improve productivity based on your working patterns.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {["Python", "GPT-4 API", "TensorFlow", "Calendar Integration"].map((tech) => (
+                  {["Python", "GPT-4 API", "TensorFlow"].map((tech) => (
                     <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                       {tech}
                     </Badge>
@@ -260,7 +260,7 @@ export default function ProjectsPage() {
                   A markdown-based blogging platform with AI features like topic suggestions, content enhancement, and SEO optimization tools.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {["Next.js", "OpenAI API", "MDX", "Tailwind CSS"].map((tech) => (
+                  {["Next.js", "OpenAI API", "Tailwind CSS"].map((tech) => (
                     <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                       {tech}
                     </Badge>
@@ -286,7 +286,7 @@ export default function ProjectsPage() {
                   A modern, responsive frontend for a blog content management system with rich text editing, image handling, and user management features.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {["React", "Redux", "TinyMCE", "Styled Components"].map((tech) => (
+                  {["React", "Redux"].map((tech) => (
                     <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                       {tech}
                     </Badge>
@@ -338,7 +338,7 @@ export default function ProjectsPage() {
                   A web application that creates visual representations of GitHub profiles, highlighting repositories, contributions, and activity trends.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {["React", "D3.js", "GitHub API", "Chart.js"].map((tech) => (
+                  {["React","GitHub API"].map((tech) => (
                     <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                       {tech}
                     </Badge>
@@ -390,7 +390,7 @@ export default function ProjectsPage() {
                   A personal knowledge management system with note-taking, concept linking, and knowledge graph visualization to build a digital second brain.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {["React", "D3.js", "IndexedDB", "Markdown"].map((tech) => (
+                  {["React"].map((tech) => (
                     <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                       {tech}
                     </Badge>
@@ -416,7 +416,7 @@ export default function ProjectsPage() {
                   An AI-powered tool that analyzes resumes, extracts key information, and provides suggestions for improvements based on job postings.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {["Python", "NLP", "Flask", "PyPDF2"].map((tech) => (
+                  {["Python", "NLP", "Flask"].map((tech) => (
                     <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                       {tech}
                     </Badge>
@@ -442,7 +442,7 @@ export default function ProjectsPage() {
                   A service that creates shortened URLs with analytics tracking for click-through rates, geographic data, and referrer information.
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {["Express", "MongoDB", "Redis", "Analytics"].map((tech) => (
+                  {["Express", "MongoDB", "Redis"].map((tech) => (
                     <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                       {tech}
                     </Badge>

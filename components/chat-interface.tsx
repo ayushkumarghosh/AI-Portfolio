@@ -210,7 +210,7 @@ export default function ChatInterface({ onNavigate }: ChatInterfaceProps) {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="text-muted-foreground hover:text-destructive" 
+            className="text-muted-foreground hover:bg-red-600 hover:text-white" 
             onClick={clearChatHistory}
             title="Clear chat history"
           >
