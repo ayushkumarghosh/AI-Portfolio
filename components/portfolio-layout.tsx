@@ -14,7 +14,7 @@ export default function PortfolioLayout({ children }: { children: React.ReactNod
   const router = useRouter()
   const pathname = usePathname()
 
-  const navigateToSection = (section: string) => {
+  const navigateToSection = (section: string, subsections: string[] = []) => {
     // Map section names to routes
     const routes: Record<string, string> = {
       about: "/",
@@ -25,7 +25,12 @@ export default function PortfolioLayout({ children }: { children: React.ReactNod
     }
 
     if (routes[section]) {
-      router.push(routes[section])
+      // If subsections are provided, add them as query parameters
+      if (subsections && subsections.length > 0) {
+        router.push(`${routes[section]}?highlight=${subsections.join(',')}`)
+      } else {
+        router.push(routes[section])
+      }
     }
   }
 

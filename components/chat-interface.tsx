@@ -17,13 +17,14 @@ interface ChatMessage {
 }
 
 interface ChatInterfaceProps {
-  onNavigate: (section: string) => void
+  onNavigate: (section: string, subsections: string[]) => void
 }
 
 // Define the structure of the API response
 interface ChatResponse {
   response: string
   section: string
+  subsections: string[]
 }
 
 export default function ChatInterface({ onNavigate }: ChatInterfaceProps) {
@@ -96,13 +97,19 @@ export default function ChatInterface({ onNavigate }: ChatInterfaceProps) {
       }
 
       const data: ChatResponse = await response.json()
+      
+      // Debug logging for subsections
+      console.log("API response:", data);
+      console.log("Received subsections:", data.subsections);
 
       // Add AI response to chat
       setMessages((prev) => [...prev, { role: "assistant", content: data.response }])
 
       // Navigate if section is specified and not 'none'
       if (data.section && data.section !== "none") {
-        onNavigate(data.section)
+        console.log("Navigating to section:", data.section);
+        console.log("With subsections:", data.subsections || []);
+        onNavigate(data.section, data.subsections || [])
       }
     } catch (error) {
       console.error("Error generating response:", error)

@@ -1,15 +1,88 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Github, Linkedin, Mail, Phone, MapPin, Download, Code, Database, Server } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import BackgroundElements from "@/components/background-elements"
+import { useSearchParams } from "next/navigation"
+import { useEffect } from "react"
 
 export default function AboutPage() {
+  const searchParams = useSearchParams()
+  const highlightParam = searchParams.get('highlight')
+  
+  useEffect(() => {
+    if (highlightParam) {
+      // Split the comma-separated list of subsections
+      const highlightSections = highlightParam.split(',')
+      
+      highlightSections.forEach(section => {
+        const element = document.getElementById(section)
+        if (element) {
+          console.log("Found element to highlight:", section)
+          
+          // Scroll to the first element
+          if (section === highlightSections[0]) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }
+          
+          // Add highlight effect
+          element.classList.add('highlight-section')
+          
+          // Make the highlight flash a few times
+          let flashCount = 0;
+          const flashInterval = setInterval(() => {
+            element.classList.toggle('highlight-flash')
+            flashCount++;
+            if (flashCount >= 6) {
+              clearInterval(flashInterval);
+            }
+          }, 500);
+          
+          // Remove highlight after 6 seconds instead of 3
+          setTimeout(() => {
+            element.classList.remove('highlight-section')
+            element.classList.remove('highlight-flash')
+          }, 6000)
+        } else {
+          console.log("Could not find element with ID:", section)
+        }
+      })
+    }
+  }, [highlightParam])
+
   return (
     <>
+      <style jsx global>{`
+        .highlight-section {
+          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.6) !important; /* Use a hardcoded blue color */
+          animation: pulse 3s ease-out;
+          position: relative;
+          z-index: 10;
+        }
+        .highlight-section::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(59, 130, 246, 0.1);
+          z-index: -1;
+        }
+        .highlight-flash {
+          background-color: rgba(59, 130, 246, 0.2) !important;
+        }
+        @keyframes pulse {
+          0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+          70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+      `}</style>
       <BackgroundElements />
       <div className="container mx-auto py-12 px-4 md:px-6">
         <div className="animate-fade-in">
-          <div className="flex flex-col md:flex-row gap-8 mb-8">
+          <div id="profile" className="flex flex-col md:flex-row gap-8 mb-8">
             <div className="w-full md:w-1/3 flex justify-center">
               <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-primary">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary opacity-20"></div>
@@ -66,7 +139,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="gradient-border mb-8">
+          <div id="bio" className="gradient-border mb-8">
             <div>
               <Card className="border-0 shadow-none">
                 <CardContent className="p-6">
@@ -85,8 +158,8 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="card-hover border border-secondary/20">
+          <div id="expertise" className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <Card id="ai-expertise" className="card-hover border border-secondary/20">
               <CardContent className="p-6 flex flex-col items-center text-center">
                 <div className="bg-primary/10 p-3 rounded-full mb-4">
                   <Code className="h-6 w-6 text-primary" />
@@ -96,7 +169,7 @@ export default function AboutPage() {
               </CardContent>
             </Card>
 
-            <Card className="card-hover border border-secondary/20">
+            <Card id="fullstack-expertise" className="card-hover border border-secondary/20">
               <CardContent className="p-6 flex flex-col items-center text-center">
                 <div className="bg-primary/10 p-3 rounded-full mb-4">
                   <Database className="h-6 w-6 text-primary" />
@@ -106,7 +179,7 @@ export default function AboutPage() {
               </CardContent>
             </Card>
 
-            <Card className="card-hover border border-secondary/20">
+            <Card id="mobile-expertise" className="card-hover border border-secondary/20">
               <CardContent className="p-6 flex flex-col items-center text-center">
                 <div className="bg-primary/10 p-3 rounded-full mb-4">
                   <Server className="h-6 w-6 text-primary" />
