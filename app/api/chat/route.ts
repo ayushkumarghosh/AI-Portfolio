@@ -114,6 +114,54 @@ January 2023 - March 2023
   * It dynamically generates and executes a custom filter function for product URL identification. [cite: 22]
   * [https://github.com/ayushkumarghosh/AI-Assisted-Ecommerce-Scraper](https://www.google.com/search?q=https://github.com/ayushkumarghosh/AI-Assisted-Ecommerce-Scraper)
 
+AI-Assisted Ecommerce Scraper
+A sophisticated web scraper powered by AI that extracts product data from various e-commerce websites. It incorporates Named Entity Recognition (NER) to identify product attributes and uses machine learning for adaptive navigation through different website structures. The tool handles product listings, pricing, specifications, reviews, and availability data while automatically bypassing anti-scraping measures.
+
+Habit Tracker
+A minimalist yet powerful application for tracking daily habits and building consistent routines. Users can define custom habits, set schedules, view streak statistics, and receive motivational reminders. The app features clean data visualization with progress graphs and heatmaps showing consistency patterns, helping users maintain accountability and achieve personal development goals.
+
+Recipe Finder
+A user-friendly web application that helps people discover recipes based on ingredients they already have. Users can input available ingredients and dietary preferences to get personalized recipe suggestions with detailed instructions. The app integrates with external recipe APIs, allows saving favorites, and includes features like nutritional information and cooking time estimates.
+
+Kanban Task Board
+A visual project management tool based on the Kanban methodology that helps teams track work progress through customizable boards. Features include drag-and-drop task management, work-in-progress limits, task prioritization, due dates, and team member assignment. The board provides visual cues for workflow bottlenecks and helps optimize productivity.
+
+Expense Splitter
+A practical application that simplifies expense sharing among friends, roommates, or travel groups. Users can create groups, add expenses, specify who paid what and who owes whom, and the app automatically calculates the optimal settlement plan to minimize transactions. It includes features for receipt scanning, expense categorization, and payment tracking.
+
+AI Daily Planner
+A smart productivity tool that uses artificial intelligence to help users optimize their daily schedules. The planner learns from user patterns to suggest optimal task arrangements, prioritize activities based on energy levels and deadlines, and block focused work sessions. It integrates with calendar systems and adapts recommendations based on past productivity data.
+
+AI Meeting Summary Tool
+A specialized application that leverages AI to automatically transcribe meeting recordings, extract key discussion points, decisions, and action items. The tool identifies speakers, categorizes topics, highlights important moments, and generates concise, shareable summaries. It supports integration with popular meeting platforms and task management systems.
+
+AI-Powered Markdown Blog
+A modern blogging platform built around the Markdown format with AI enhancements throughout the writing process. The platform offers smart content suggestions, SEO optimization recommendations, automated image generation for articles, and readability analysis. It includes features like scheduled publishing, version history, and social sharing integration.
+
+Blog CMS Frontend
+A versatile content management system frontend designed specifically for blog platforms with an emphasis on user experience and design flexibility. The interface supports rich text editing, media library management, draft previewing, and content scheduling. It features customizable themes, SEO tools, multi-author support, and comprehensive analytics.
+
+Expense Tracker API
+A comprehensive RESTful API for financial tracking applications that handles expense recording, categorization, and analysis. The API supports features like budget setting, recurring transactions, multi-currency support, and financial report generation. It includes robust authentication, data validation, and integration endpoints for third-party financial services.
+
+GitHub Profile Visualizer
+A data visualization tool that transforms GitHub user data into meaningful visual representations. The application shows contribution patterns, repository statistics, language usage, and collaboration networks through interactive charts and graphs. Users can generate shareable profile cards and identify their strongest skills based on commit history.
+
+Notes App Backend
+A scalable backend service designed for note-taking applications with features for organizing, searching, and sharing notes. The system supports rich text formatting, file attachments, tagging, and full-text search capabilities. It includes user authentication, note versioning, and secure sharing controls.
+
+Personal Knowledge Base
+A digital knowledge management system designed to serve as an external brain for storing and retrieving information. The application allows users to create interconnected notes with bidirectional linking, tag classification, and dynamic knowledge graph visualization. It supports various media types and includes powerful search capabilities.
+
+Resume Analyzer
+An AI-powered tool that helps job seekers optimize their resumes by analyzing content against job descriptions. The application identifies missing keywords, suggests skill additions, evaluates ATS compatibility, and recommends structural improvements. It includes features for comparing resume versions and tracking application performance.
+
+URL Shortener
+A full-featured URL shortening service with extensive analytics capabilities. Beyond basic link shortening, the service offers click tracking, geographic analytics, device statistics, and referrer data. Users can create custom short links, set expiration dates, and password-protect links for additional security.
+
+Webhook Listener
+A flexible infrastructure component that receives and processes webhook events from third-party services. The application validates incoming payloads, routes events to appropriate handlers, retries failed deliveries, and provides detailed logs for debugging. It supports custom transformations and integrates with various notification systems.
+
 **Education**
 
   * M.Tech in Software Engineering, BITS Pilani, Rajasthan (2025)
@@ -166,10 +214,28 @@ For the Skills page, available subsections are:
 For the Projects page, available subsections are:
 - "ai-analyzer": For the AI DB Analyzer project (chatbot for database analysis)
 - "ai-live": For the AI Live project (imitation of Google AI studio's live stream)
+- "ai-ecommerce-scraper": For the AI-Assisted Ecommerce Scraper project
+- "habit-tracker": For the Habit Tracker project
+- "recipe-finder": For the Recipe Finder project
+- "kanban-task-board": For the Kanban Task Board project
+- "expense-splitter": For the Expense Splitter project
+- "ai-daily-planner": For the AI Daily Planner project
+- "ai-meeting-summary-tool": For the AI Meeting Summary Tool project
+- "ai-powered-markdown-blog": For the AI-Powered Markdown Blog project
+- "blog-cms-frontend": For the Blog CMS Frontend project
+- "expense-tracker-api": For the Expense Tracker API project
+- "github-profile-visualizer": For the GitHub Profile Visualizer project
+- "notes-app-backend": For the Notes App Backend project
+- "personal-knowledge-base": For the Personal Knowledge Base project
+- "resume-analyzer": For the Resume Analyzer project
+- "url-shortener": For the URL Shortener project
+- "webhook-listener": For the Webhook Listener project
 
 For the Education page, available subsections are:
 - "masters": For M.Tech in Software Engineering from BITS Pilani
 - "bachelors": For B.Tech in Computer Science Engineering from Amity University
+
+VERY IMPORTANT: When you mention a specific project in your response (like "AI Daily Planner", "Habit Tracker", etc.), you MUST include the corresponding project ID in the subsections array. For example, if you discuss the AI Daily Planner, include "ai-daily-planner" in the subsections array. This is critical for proper page navigation and highlighting.
 
 In your response, include:
 1. Your detailed yet accurate answer to the user's query about Ayush's professional background
@@ -181,7 +247,10 @@ In your response, include:
 // about: profile, bio, expertise, ai-expertise, fullstack-expertise, mobile-expertise
 // experience: sap, sap-ai, sap-flutter, ziroh
 // skills: languages, databases, cloud, dev-practices, ai-ml
-// projects: ai-analyzer, ai-live
+// projects: ai-analyzer, ai-live, ai-ecommerce-scraper, habit-tracker, recipe-finder, kanban-task-board, 
+// expense-splitter, ai-daily-planner, ai-meeting-summary-tool, ai-powered-markdown-blog, 
+// blog-cms-frontend, expense-tracker-api, github-profile-visualizer, notes-app-backend, 
+// personal-knowledge-base, resume-analyzer, url-shortener, webhook-listener
 // education: masters, bachelors
 
 export async function POST(request: NextRequest) {
@@ -342,7 +411,26 @@ export async function POST(request: NextRequest) {
           about: ["profile", "bio", "expertise", "ai-expertise", "fullstack-expertise", "mobile-expertise"],
           experience: ["sap", "sap-ai", "sap-flutter", "ziroh"],
           skills: ["languages", "databases", "cloud", "dev-practices", "ai-ml"],
-          projects: ["ai-analyzer", "ai-live"],
+          projects: [
+            "ai-analyzer", 
+            "ai-live", 
+            "ai-ecommerce-scraper", 
+            "habit-tracker", 
+            "recipe-finder", 
+            "kanban-task-board", 
+            "expense-splitter", 
+            "ai-daily-planner", 
+            "ai-meeting-summary-tool", 
+            "ai-powered-markdown-blog", 
+            "blog-cms-frontend", 
+            "expense-tracker-api", 
+            "github-profile-visualizer", 
+            "notes-app-backend", 
+            "personal-knowledge-base", 
+            "resume-analyzer", 
+            "url-shortener", 
+            "webhook-listener"
+          ],
           education: ["masters", "bachelors"]
         };
         

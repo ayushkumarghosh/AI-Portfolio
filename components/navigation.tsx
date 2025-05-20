@@ -22,7 +22,7 @@ export default function Navigation() {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center">
           <Link href="/" className="mr-8 flex items-center space-x-2">
-            <span className="text-xl font-bold text-primary">Ayush Kumar Ghosh</span>
+            <span className="text-xl font-bold text-primary">AI Portfolio</span>
           </Link>
           <nav className="hidden md:flex items-center space-x-8 text-sm font-medium">
             {navItems.map((item) => (
