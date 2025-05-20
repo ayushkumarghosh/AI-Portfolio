@@ -6,58 +6,120 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Briefcase, Calendar } from "lucide-react"
 import BackgroundElements from "@/components/background-elements"
 import { useSearchParams, useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+
+// Extend window interface for our debug functions
+declare global {
+  interface Window {
+    activateFlutterTab: () => boolean;
+    activateAITab: () => boolean;
+  }
+}
 
 export default function ExperiencePage() {
   const searchParams = useSearchParams()
   const highlightParam = searchParams.get('highlight')
+  const [activeTab, setActiveTab] = useState<string>("ai")
   
   useEffect(() => {
+    // Special check for Flutter experience
+    if (highlightParam && highlightParam.includes('sap-flutter')) {
+      console.log('Flutter experience detected in URL, activating Flutter tab directly')
+      setActiveTab('flutter')
+    }
+  }, [highlightParam])
+
+  useEffect(() => {
+    // Add utility functions to window for debugging
+    const activateTabForTesting = (tabValue: string) => {
+      console.log(`Manually activating ${tabValue} tab`)
+      setActiveTab(tabValue)
+      return true
+    }
+    
+    // @ts-ignore - Add to window for debugging
+    window.activateFlutterTab = () => activateTabForTesting('flutter')
+    // @ts-ignore - Add to window for debugging
+    window.activateAITab = () => activateTabForTesting('ai')
+    
     if (highlightParam) {
       // Split the comma-separated list of subsections
       const highlightSections = highlightParam.split(',')
       
-      highlightSections.forEach(section => {
-        const element = document.getElementById(section)
-        if (element) {
-          console.log("Found element to highlight:", section)
-          
-          // Scroll to the first element
-          if (section === highlightSections[0]) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-          }
-          
-          // Add highlight effect
-          element.classList.add('highlight-section')
-          
-          // Make the highlight flash a few times
-          let flashCount = 0;
-          const flashInterval = setInterval(() => {
-            element.classList.toggle('highlight-flash')
-            flashCount++;
-            if (flashCount >= 6) {
-              clearInterval(flashInterval);
+      // Add a small delay to ensure DOM is fully loaded
+      setTimeout(() => {
+        highlightSections.forEach(section => {
+          const element = document.getElementById(section)
+          if (element) {
+            console.log("Found element to highlight:", section)
+            
+            // Scroll to the first element
+            if (section === highlightSections[0]) {
+              element.scrollIntoView({ behavior: 'smooth', block: 'center' })
             }
-          }, 500);
-          
-          // Remove highlight after 6 seconds instead of 3
-          setTimeout(() => {
-            element.classList.remove('highlight-section')
-            element.classList.remove('highlight-flash')
-          }, 6000)
-          
-          // If it's a tab section, activate the tab using HTMLElement
-          if (section === 'sap-ai') {
-            const tabElement = document.querySelector('[data-state="inactive"][value="ai"]') as HTMLElement
-            if (tabElement) tabElement.click()
-          } else if (section === 'sap-flutter') {
-            const tabElement = document.querySelector('[data-state="inactive"][value="flutter"]') as HTMLElement
-            if (tabElement) tabElement.click()
+            
+            // Add highlight effect
+            element.classList.add('highlight-section')
+            
+            // Make the highlight flash a few times
+            let flashCount = 0;
+            const flashInterval = setInterval(() => {
+              element.classList.toggle('highlight-flash')
+              flashCount++;
+              if (flashCount >= 6) {
+                clearInterval(flashInterval);
+              }
+            }, 500);
+            
+            // Remove highlight after 6 seconds instead of 3
+            setTimeout(() => {
+              element.classList.remove('highlight-section')
+              element.classList.remove('highlight-flash')
+            }, 6000)
+            
+            // Tab activation function with retry logic
+            const activateTab = (tabValue: string, retryCount = 0, maxRetries = 5) => {
+              console.log(`Attempting to activate ${tabValue} tab (attempt ${retryCount + 1})`)
+              
+              // Use React state to control tab (preferred method)
+              setActiveTab(tabValue)
+              
+              // As a backup, also try DOM manipulation
+              try {
+                // Try multiple selector strategies
+                let tabElement = document.querySelector(`[data-state="inactive"][value="${tabValue}"]`) as HTMLElement
+                
+                if (!tabElement) {
+                  tabElement = document.querySelector(`[value="${tabValue}"]`) as HTMLElement
+                  console.log(`Using fallback selector for ${tabValue} tab`)
+                }
+                
+                if (tabElement) {
+                  console.log(`Also clicking ${tabValue} tab manually`)
+                  tabElement.click()
+                } else if (retryCount < maxRetries) {
+                  // Retry with delay if tab not found
+                  console.log(`Tab element for ${tabValue} not found, retrying in 200ms...`)
+                  setTimeout(() => activateTab(tabValue, retryCount + 1, maxRetries), 200)
+                } else {
+                  console.log(`Failed to find tab element for ${tabValue} after ${maxRetries} attempts`)
+                }
+              } catch (error) {
+                console.error(`Error activating tab ${tabValue}:`, error)
+              }
+            }
+            
+            // If it's a tab section, activate the appropriate tab
+            if (section === 'sap-ai') {
+              activateTab('ai')
+            } else if (section === 'sap-flutter') {
+              activateTab('flutter')
+            }
+          } else {
+            console.log("Could not find element with ID:", section)
           }
-        } else {
-          console.log("Could not find element with ID:", section)
-        }
-      })
+        })
+      }, 100) // Small delay to ensure DOM is ready
     }
   }, [highlightParam])
 
@@ -110,7 +172,7 @@ export default function ExperiencePage() {
               </div>
             </div>
 
-            <Tabs defaultValue="ai" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="mb-6 w-full justify-start bg-muted">
                 <TabsTrigger value="ai" className="data-[state=active]:bg-primary data-[state=active]:text-white">
                   AI Developer

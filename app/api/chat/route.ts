@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
       For the Experience page, available subsections are:
       - "sap": For SAP Labs experience in general
       - "sap-ai": For SAP AI Developer role specifically  
-      - "sap-flutter": For SAP Flutter Developer role specifically
+      - "sap-flutter": For SAP Flutter Developer role specifically (IMPORTANT: When the user asks about Flutter, mobile apps, cross-platform development, Dart, or any mobile app development at SAP, return this subsection)
       - "ziroh": For Ziroh Labs internship experience
       
       For the Skills page, available subsections are:
@@ -234,6 +234,20 @@ export async function POST(request: NextRequest) {
         if (structuredResponse.section && structuredResponse.section !== "none") {
           const validIds = sectionMap[structuredResponse.section as keyof typeof sectionMap] || [];
           console.log(`Valid IDs for section "${structuredResponse.section}":`, validIds);
+          
+          // Special handling for Flutter queries
+          const userQuery = processedMessages[processedMessages.length - 1].content.toLowerCase();
+          if (structuredResponse.section === "experience" && 
+              (userQuery.includes("flutter") || 
+               userQuery.includes("mobile") || 
+               userQuery.includes("dart") ||
+               userQuery.includes("cross-platform"))) {
+            console.log("Flutter-related query detected, ensuring sap-flutter is included");
+            if (!structuredResponse.subsections.includes("sap-flutter")) {
+              structuredResponse.subsections.push("sap-flutter");
+            }
+          }
+          
           console.log("Matching subsections:", 
             structuredResponse.subsections.filter((id: string) => validIds.includes(id))
           );
@@ -273,6 +287,20 @@ export async function POST(request: NextRequest) {
             if (structuredResponse.section && structuredResponse.section !== "none") {
               const validIds = sectionMap[structuredResponse.section as keyof typeof sectionMap] || [];
               console.log(`Valid IDs for section "${structuredResponse.section}":`, validIds);
+              
+              // Special handling for Flutter queries
+              const userQuery = processedMessages[processedMessages.length - 1].content.toLowerCase();
+              if (structuredResponse.section === "experience" && 
+                  (userQuery.includes("flutter") || 
+                   userQuery.includes("mobile") || 
+                   userQuery.includes("dart") ||
+                   userQuery.includes("cross-platform"))) {
+                console.log("Flutter-related query detected, ensuring sap-flutter is included");
+                if (!structuredResponse.subsections.includes("sap-flutter")) {
+                  structuredResponse.subsections.push("sap-flutter");
+                }
+              }
+              
               console.log("Matching subsections:", 
                 structuredResponse.subsections.filter((id: string) => validIds.includes(id))
               );
@@ -336,7 +364,7 @@ export async function POST(request: NextRequest) {
       For the Experience page, available subsections are:
       - "sap": For SAP Labs experience in general
       - "sap-ai": For SAP AI Developer role specifically  
-      - "sap-flutter": For SAP Flutter Developer role specifically
+      - "sap-flutter": For SAP Flutter Developer role specifically (IMPORTANT: When the user asks about Flutter, mobile apps, cross-platform development, Dart, or any mobile app development at SAP, return this subsection)
       - "ziroh": For Ziroh Labs internship experience
       
       For the Skills page, available subsections are:
@@ -425,6 +453,20 @@ export async function POST(request: NextRequest) {
         if (structuredResponse.section && structuredResponse.section !== "none") {
           const validIds = sectionMap[structuredResponse.section as keyof typeof sectionMap] || [];
           console.log(`Valid IDs for section "${structuredResponse.section}":`, validIds);
+          
+          // Special handling for Flutter queries
+          const userQuery = processedMessages[processedMessages.length - 1].content.toLowerCase();
+          if (structuredResponse.section === "experience" && 
+              (userQuery.includes("flutter") || 
+               userQuery.includes("mobile") || 
+               userQuery.includes("dart") ||
+               userQuery.includes("cross-platform"))) {
+            console.log("Flutter-related query detected, ensuring sap-flutter is included");
+            if (!structuredResponse.subsections.includes("sap-flutter")) {
+              structuredResponse.subsections.push("sap-flutter");
+            }
+          }
+          
           console.log("Matching subsections:", 
             structuredResponse.subsections.filter((id: string) => validIds.includes(id))
           );
@@ -464,6 +506,20 @@ export async function POST(request: NextRequest) {
             if (structuredResponse.section && structuredResponse.section !== "none") {
               const validIds = sectionMap[structuredResponse.section as keyof typeof sectionMap] || [];
               console.log(`Valid IDs for section "${structuredResponse.section}":`, validIds);
+              
+              // Special handling for Flutter queries
+              const userQuery = processedMessages[processedMessages.length - 1].content.toLowerCase();
+              if (structuredResponse.section === "experience" && 
+                  (userQuery.includes("flutter") || 
+                   userQuery.includes("mobile") || 
+                   userQuery.includes("dart") ||
+                   userQuery.includes("cross-platform"))) {
+                console.log("Flutter-related query detected, ensuring sap-flutter is included");
+                if (!structuredResponse.subsections.includes("sap-flutter")) {
+                  structuredResponse.subsections.push("sap-flutter");
+                }
+              }
+              
               console.log("Matching subsections:", 
                 structuredResponse.subsections.filter((id: string) => validIds.includes(id))
               );
