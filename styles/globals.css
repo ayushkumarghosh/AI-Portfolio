@@ -92,3 +92,38 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Animation delay utility classes */
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+.animate-delay-400 {
+  animation-delay: 400ms;
+}
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+.animate-delay-600 {
+  animation-delay: 600ms;
+}
+
+/* Prevent flash of unstyled content */
+.page-transition-wrapper {
+  opacity: 0;
+}
+
+.page-transition-wrapper.loaded {
+  opacity: 1;
+  transition: opacity 0.5s ease-in;
+}
+
+/* Ensure animations only start after page is visible */
+.page-transition-wrapper:not(.loaded) .animate-fade-in {
+  animation: none !important;
+}

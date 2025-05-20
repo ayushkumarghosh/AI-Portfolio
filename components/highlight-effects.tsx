@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 export const HighlightStyles = () => {
@@ -49,57 +49,74 @@ export const HighlightStyles = () => {
 export function useHighlightEffect() {
   const searchParams = useSearchParams()
   const highlightParam = searchParams.get('highlight')
+  const [isMounted, setIsMounted] = useState(false)
+  
+  // Handle component mounting
+  useEffect(() => {
+    setIsMounted(true)
+    return () => setIsMounted(false)
+  }, [])
   
   useEffect(() => {
-    if (!highlightParam) return
+    // Only run the effect if the component is mounted and we have a highlight param
+    if (!isMounted || !highlightParam) return
     
     // Split the comma-separated list of subsections
     const highlightSections = highlightParam.split(',')
     
-    // First add the base class to all elements without animation
-    highlightSections.forEach(section => {
-      const element = document.getElementById(section)
-      if (element) {
-        element.classList.add('highlight-section')
-      }
-    })
+    // Use a longer delay to ensure the page is fully rendered and page transitions are complete
+    const initialDelay = 600
     
-    // Small delay to ensure the base class has been applied
-    setTimeout(() => {
+    const highlightTimer = setTimeout(() => {
+      // First add the base class to all elements without animation
       highlightSections.forEach(section => {
         const element = document.getElementById(section)
         if (element) {
-          // Scroll to the first element
-          if (section === highlightSections[0]) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-          }
-          
-          // Add highlight effect classes in sequence
-          element.classList.add('highlight-active')
-          
-          // Add pulse effect after a short delay
-          setTimeout(() => {
-            element.classList.add('highlight-pulse')
-          }, 300)
-          
-          // Remove highlight after 6 seconds
-          setTimeout(() => {
-            element.classList.remove('highlight-pulse')
-            
-            // Fade out the highlight
-            setTimeout(() => {
-              element.classList.remove('highlight-active')
-              
-              // Clean up the base class after transitions complete
-              setTimeout(() => {
-                element.classList.remove('highlight-section')
-              }, 300)
-            }, 300)
-          }, 6000)
+          element.classList.add('highlight-section')
         }
       })
-    }, 50)
-  }, [highlightParam])
+      
+      // Additional delay before applying active class
+      setTimeout(() => {
+        highlightSections.forEach(section => {
+          const element = document.getElementById(section)
+          if (element) {
+            // Scroll to the first element
+            if (section === highlightSections[0]) {
+              element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }
+            
+            // Add highlight effect classes in sequence
+            element.classList.add('highlight-active')
+            
+            // Add pulse effect after a short delay
+            setTimeout(() => {
+              element.classList.add('highlight-pulse')
+            }, 300)
+            
+            // Remove highlight after 6 seconds
+            setTimeout(() => {
+              element.classList.remove('highlight-pulse')
+              
+              // Fade out the highlight
+              setTimeout(() => {
+                element.classList.remove('highlight-active')
+                
+                // Clean up the base class after transitions complete
+                setTimeout(() => {
+                  element.classList.remove('highlight-section')
+                }, 300)
+              }, 300)
+            }, 6000)
+          }
+        })
+      }, 100)
+    }, initialDelay)
+    
+    return () => {
+      clearTimeout(highlightTimer)
+    }
+  }, [highlightParam, isMounted])
   
   return <HighlightStyles />
 }

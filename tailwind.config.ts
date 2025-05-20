@@ -68,11 +68,36 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in": "fade-in 0.8s ease-out forwards"
       },
+      utilities: {
+        '.animate-delay-100': {
+          'animation-delay': '100ms'
+        },
+        '.animate-delay-200': {
+          'animation-delay': '200ms'
+        },
+        '.animate-delay-300': {
+          'animation-delay': '300ms'
+        },
+        '.animate-delay-400': {
+          'animation-delay': '400ms'
+        },
+        '.animate-delay-500': {
+          'animation-delay': '500ms'
+        },
+        '.animate-delay-600': {
+          'animation-delay': '600ms'
+        }
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],
