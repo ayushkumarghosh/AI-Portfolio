@@ -3,10 +3,11 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Briefcase, Calendar } from "lucide-react"
+import { Briefcase, Calendar, MapPin, ExternalLink } from "lucide-react"
 import BackgroundElements from "@/components/background-elements"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import useHighlightEffect from "@/components/highlight-effects"
 
 // Extend window interface for our debug functions
 declare global {
@@ -21,6 +22,9 @@ export default function ExperiencePage() {
   const highlightParam = searchParams.get('highlight')
   const [activeTab, setActiveTab] = useState<string>("ai")
   
+  // Use the shared highlight effect hook
+  const highlightStyles = useHighlightEffect()
+
   useEffect(() => {
     // Special check for Flutter experience
     if (highlightParam && highlightParam.includes('sap-flutter')) {
@@ -125,32 +129,7 @@ export default function ExperiencePage() {
 
   return (
     <>
-      <style jsx global>{`
-        .highlight-section {
-          box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.6) !important; /* Use a hardcoded blue color */
-          animation: pulse 3s ease-out;
-          position: relative;
-          z-index: 10;
-        }
-        .highlight-section::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(59, 130, 246, 0.1);
-          z-index: -1;
-        }
-        .highlight-flash {
-          background-color: rgba(59, 130, 246, 0.2) !important;
-        }
-        @keyframes pulse {
-          0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-          70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-        }
-      `}</style>
+      {highlightStyles}
       <BackgroundElements />
       <div className="container mx-auto py-12 px-4 md:px-6">
         <h1 className="text-4xl font-bold mb-8 text-primary animate-fade-in">Experience</h1>
