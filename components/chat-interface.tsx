@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Send } from "lucide-react"
 import { cn } from "@/lib/utils"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
 interface ChatMessage {
   role: "user" | "assistant"
@@ -16,6 +18,12 @@ interface ChatMessage {
 
 interface ChatInterfaceProps {
   onNavigate: (section: string) => void
+}
+
+// Define the structure of the API response
+interface ChatResponse {
+  response: string
+  section: string
 }
 
 export default function ChatInterface({ onNavigate }: ChatInterfaceProps) {
@@ -73,26 +81,7 @@ export default function ChatInterface({ onNavigate }: ChatInterfaceProps) {
     setIsLoading(true)
 
     try {
-      // Process navigation commands
-      const navigationKeywords = {
-        about: ["about", "who is ayush", "introduction", "bio", "home"],
-        experience: ["experience", "work", "job", "sap", "ziroh"],
-        skills: ["skills", "technologies", "tech stack", "programming"],
-        projects: ["projects", "personal projects", "portfolio", "github"],
-        education: ["education", "university", "college", "degree", "bits", "amity"],
-      }
-
-      let sectionToNavigate = null
-
-      // Check if the message contains navigation keywords
-      for (const [section, keywords] of Object.entries(navigationKeywords)) {
-        if (keywords.some((keyword) => userMessage.toLowerCase().includes(keyword))) {
-          sectionToNavigate = section
-          break
-        }
-      }
-
-      // Get AI response
+      // Get AI response with structured output
       const allMessages = [...messages, { role: "user", content: userMessage }]
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -106,14 +95,14 @@ export default function ChatInterface({ onNavigate }: ChatInterfaceProps) {
         throw new Error("Failed to fetch response")
       }
 
-      const data = await response.json()
+      const data: ChatResponse = await response.json()
 
       // Add AI response to chat
       setMessages((prev) => [...prev, { role: "assistant", content: data.response }])
 
-      // Navigate if a section was matched
-      if (sectionToNavigate) {
-        onNavigate(sectionToNavigate)
+      // Navigate if section is specified and not 'none'
+      if (data.section && data.section !== "none") {
+        onNavigate(data.section)
       }
     } catch (error) {
       console.error("Error generating response:", error)
@@ -145,6 +134,53 @@ export default function ChatInterface({ onNavigate }: ChatInterfaceProps) {
         :global(.dark) .chat-input::placeholder {
           color: #ffffff;
         }
+        .markdown p {
+          margin-bottom: 0.5rem;
+        }
+        .markdown ul, .markdown ol {
+          margin-left: 1.5rem;
+          margin-bottom: 0.5rem;
+        }
+        .markdown ul {
+          list-style-type: disc;
+        }
+        .markdown ol {
+          list-style-type: decimal;
+        }
+        .markdown code {
+          background-color: rgba(0, 0, 0, 0.1);
+          padding: 0.1rem 0.2rem;
+          border-radius: 0.2rem;
+          font-family: monospace;
+        }
+        .markdown pre {
+          background-color: rgba(0, 0, 0, 0.1);
+          padding: 0.5rem;
+          border-radius: 0.3rem;
+          overflow-x: auto;
+          margin-bottom: 0.5rem;
+        }
+        .markdown a {
+          color: #3b82f6;
+          text-decoration: underline;
+        }
+        .markdown h1, .markdown h2, .markdown h3, .markdown h4, .markdown h5, .markdown h6 {
+          font-weight: bold;
+          margin-top: 0.5rem;
+          margin-bottom: 0.5rem;
+        }
+        .markdown blockquote {
+          border-left: 4px solid rgba(0, 0, 0, 0.2);
+          padding-left: 0.5rem;
+          margin-left: 0.5rem;
+          color: rgba(0, 0, 0, 0.7);
+        }
+        .user-markdown code, .user-markdown pre, .user-markdown blockquote {
+          background-color: rgba(255, 255, 255, 0.2);
+        }
+        .user-markdown {
+          color: white;
+        }
       `}</style>
       <div className="flex h-full flex-col bg-background border-r border-secondary/20">
         <div className="flex items-center justify-between border-b border-secondary/20 px-4 py-3">
@@ -158,12 +194,14 @@ export default function ChatInterface({ onNavigate }: ChatInterfaceProps) {
                 className={cn(
                   "flex flex-col gap-2 rounded-lg px-3 py-2 text-sm break-words",
                   message.role === "user"
-                    ? "ml-auto bg-primary chat-message-user max-w-[85%]"
-                    : "bg-muted chat-message-assistant max-w-[90%]",
+                    ? "ml-auto bg-primary chat-message-user max-w-[85%] user-markdown"
+                    : "bg-muted chat-message-assistant max-w-[90%] markdown",
                 )}
                 style={{ color: message.role === "user" ? "#ffffff" : "#000000" }}
               >
-                {message.content}
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {message.content}
+                </ReactMarkdown>
               </div>
             ))}
             {isLoading && (
