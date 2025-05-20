@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 142 42% 49%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 184 8% 38%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 91%;
+    --muted-foreground: 184 8% 38%;
+    --accent: 142 42% 49%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 142 42% 49%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 91%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 91%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 91%;
+    --primary: 142 42% 49%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 184 8% 38%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 142 42% 49%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 91%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 142 42% 49%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes move1 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(80px, 80px);
+  }
+}
+
+@keyframes move2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-80px, 80px);
+  }
+}
+
+@keyframes move3 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(60px, -80px);
+  }
+}
+
+@keyframes move4 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(70px, -60px);
+  }
+}
+
+@keyframes move5 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-70px, -70px);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animate-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+
+/* Custom styling */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.gradient-border {
+  position: relative;
+  border-radius: var(--radius);
+  background: linear-gradient(to right, #4aad52, #596869);
+  padding: 2px;
+}
+
+.gradient-border > div {
+  background: var(--background);
+  border-radius: calc(var(--radius) - 2px);
+}
+
+/* Chat message styling - Fixed for both light and dark modes */
+.chat-message-assistant {
+  color: #000000 !important;
+}
+
+.chat-message-user {
+  color: #ffffff !important;
+}
+
+.chat-input::placeholder {
+  color: rgba(89, 104, 105, 0.8) !important;
+}
+
+/* Dark mode placeholder color */
+.dark .chat-input::placeholder {
+  color: rgba(107, 114, 128, 0.8) !important;
+}
