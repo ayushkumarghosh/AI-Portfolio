@@ -4,14 +4,20 @@ import { Card, CardContent } from "@/components/ui/card"
 import { GraduationCap, Calendar } from "lucide-react"
 import BackgroundElements from "@/components/background-elements"
 import useHighlightEffect from "@/components/highlight-effects"
+import { Suspense } from "react"
+
+// Create a client component that uses the highlight effect
+function HighlightEffectWrapper() {
+  const highlightStyles = useHighlightEffect()
+  return highlightStyles
+}
 
 export default function EducationPage() {
-  // Use the shared highlight effect hook
-  const highlightStyles = useHighlightEffect()
-
   return (
     <>
-      {highlightStyles}
+      <Suspense fallback={null}>
+        <HighlightEffectWrapper />
+      </Suspense>
       <BackgroundElements />
       <div className="container mx-auto px-4 py-8">
         <div className="space-y-8">

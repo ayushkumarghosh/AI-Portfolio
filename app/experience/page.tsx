@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Briefcase, Calendar, MapPin, ExternalLink } from "lucide-react"
 import BackgroundElements from "@/components/background-elements"
 import { useSearchParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import useHighlightEffect from "@/components/highlight-effects"
 
 // Extend window interface for our debug functions
@@ -17,21 +17,24 @@ declare global {
   }
 }
 
-export default function ExperiencePage() {
+// Create a client component that uses the highlight effect
+function HighlightEffectWrapper() {
+  const highlightStyles = useHighlightEffect()
+  return highlightStyles
+}
+
+// Create a client component that handles tab activation based on URL params
+function TabActivationHandler({ setActiveTab }: { setActiveTab: (tab: string) => void }) {
   const searchParams = useSearchParams()
   const highlightParam = searchParams.get('highlight')
-  const [activeTab, setActiveTab] = useState<string>("ai")
   
-  // Use the shared highlight effect hook
-  const highlightStyles = useHighlightEffect()
-
   useEffect(() => {
     // Special check for Flutter experience
     if (highlightParam && highlightParam.includes('sap-flutter')) {
       console.log('Flutter experience detected in URL, activating Flutter tab directly')
       setActiveTab('flutter')
     }
-  }, [highlightParam])
+  }, [highlightParam, setActiveTab])
 
   useEffect(() => {
     // Add utility functions to window for debugging
@@ -125,11 +128,20 @@ export default function ExperiencePage() {
         })
       }, 100) // Small delay to ensure DOM is ready
     }
-  }, [highlightParam])
+  }, [highlightParam, setActiveTab])
+  
+  return null
+}
+
+export default function ExperiencePage() {
+  const [activeTab, setActiveTab] = useState<string>("ai")
 
   return (
     <>
-      {highlightStyles}
+      <Suspense fallback={null}>
+        <HighlightEffectWrapper />
+        <TabActivationHandler setActiveTab={setActiveTab} />
+      </Suspense>
       <BackgroundElements />
       <div className="container mx-auto py-12 px-4 md:px-6">
         <h1 className="text-4xl font-bold mb-8 text-primary animate-fade-in">Experience</h1>

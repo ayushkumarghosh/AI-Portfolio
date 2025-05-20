@@ -5,14 +5,20 @@ import { Github, Linkedin, Mail, Phone, MapPin, Download, Code, Database, Server
 import { Button } from "@/components/ui/button"
 import BackgroundElements from "@/components/background-elements"
 import useHighlightEffect from "@/components/highlight-effects"
+import { Suspense } from "react"
+
+// Create a client component that uses the highlight effect
+function HighlightEffectWrapper() {
+  const highlightStyles = useHighlightEffect()
+  return highlightStyles
+}
 
 export default function AboutPage() {
-  // Use the shared highlight effect hook
-  const highlightStyles = useHighlightEffect()
-
   return (
     <>
-      {highlightStyles}
+      <Suspense fallback={null}>
+        <HighlightEffectWrapper />
+      </Suspense>
       <BackgroundElements />
       <div className="container mx-auto py-12 px-4 md:px-6">
         <div className="animate-fade-in">

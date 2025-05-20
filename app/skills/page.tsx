@@ -5,14 +5,20 @@ import { Badge } from "@/components/ui/badge"
 import { Code, Database, Cloud } from "lucide-react"
 import BackgroundElements from "@/components/background-elements"
 import useHighlightEffect from "@/components/highlight-effects"
+import { Suspense } from "react"
+
+// Create a client component that uses the highlight effect
+function HighlightEffectWrapper() {
+  const highlightStyles = useHighlightEffect()
+  return highlightStyles
+}
 
 export default function SkillsPage() {
-  // Use the shared highlight effect hook
-  const highlightStyles = useHighlightEffect()
-  
   return (
     <>
-      {highlightStyles}
+      <Suspense fallback={null}>
+        <HighlightEffectWrapper />
+      </Suspense>
       <BackgroundElements />
       <div className="container mx-auto py-12 px-4 md:px-6">
         <h1 className="text-4xl font-bold mb-8 text-primary animate-fade-in">Skills</h1>
