@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid request body" }, { status: 400 })
     }
 
-    // Get the model with a more reliable configuration
+    // Get the model
     const model = genAI.getGenerativeModel({ 
       model: "gemini-2.5-flash-preview-04-17",
     })
@@ -253,30 +253,34 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Prepare the chat history - filter out assistant messages at the beginning
-    const processedMessages = [...messages]
+    // Process the messages to Gemini format
+    const processedMessages = messages.map((msg: any) => ({
+      role: msg.role === "user" ? "user" : "model",
+      parts: [{ text: msg.content }]
+    }))
 
-    // If the first message is from the assistant, we need to handle it differently
-    // since Gemini expects the first message to be from the user
-    if (processedMessages.length > 0 && processedMessages[0].role === "assistant") {
-      // Add a system prompt as context instead
-      const systemPrompt = `You are Ayush's portfolio assistant. Your initial greeting was: "${processedMessages[0].content}" 
+    // Check if we need to include the initial greeting
+    const systemInstruction = processedMessages[0]?.role === "model" ? 
+      `You are Ayush's portfolio assistant. Your initial greeting was: "${processedMessages[0].parts[0].text}" 
       You help users learn about Ayush Kumar Ghosh, a Software Developer at SAP Labs India with expertise in AI development, 
-      full-stack development, and cross-platform mobile applications. Answer questions about his experience, skills, projects, 
-      and education. Be helpful, concise, and friendly.
+      full-stack development, and cross-platform mobile applications.` : "";
 
-      ${sharedPromptContent}`
-
-      // Start a new chat without history
-      const result = await model.generateContent({
-        contents: [
-          {
-            role: "user",
-            parts: [
-              { text: systemPrompt + "\n\nUser query: " + processedMessages[processedMessages.length - 1].content },
-            ],
-          },
-        ],
+    try {
+      // For history, filter out any assistant messages at the beginning
+      // Google GenAI requires the first message to be from a user
+      let historyMessages = processedMessages.slice(0, -1);
+      
+      // Filter out leading assistant/model messages
+      while (historyMessages.length > 0 && historyMessages[0].role === "model") {
+        historyMessages.shift();
+      }
+      
+      // If there are no user messages in history, don't use history
+      const useHistory = historyMessages.length > 0;
+      
+      // Create a chat session with history using the Google GenAI library
+      const chat = model.startChat({
+        history: useHistory ? historyMessages : undefined,
         generationConfig: {
           temperature: 0.7,
           topP: 0.8,
@@ -285,173 +289,28 @@ export async function POST(request: NextRequest) {
           responseMimeType: "application/json",
           responseSchema: responseSchema as Schema,
         },
-      })
-
-      // Log the raw response to help debug
-      console.log("Raw candidate response (first case):", JSON.stringify(result.response.candidates?.[0]?.content));
-      
-      try {
-        // Access the response text properly
-        const responseText = result.response.text();
-        console.log("Response text (first case):", responseText);
-        
-        // Check if the response is empty
-        if (!responseText || responseText.trim() === '') {
-          console.warn("Empty response from Gemini API");
-          
-          // Try fallback approach 
-          const fallbackResponse = await handleEmptyResponseFallback(
-            systemPrompt + "\n\nUser query: " + processedMessages[processedMessages.length - 1].content
-          );
-          
-          return NextResponse.json(fallbackResponse);
-        }
-        
-        // Try to parse the JSON
-        const structuredResponse = JSON.parse(responseText);
-        console.log("Parsed structured response (direct):", structuredResponse);
-        
-        // Ensure subsections is always an array
-        if (!structuredResponse.subsections) {
-          structuredResponse.subsections = [];
-        } else if (!Array.isArray(structuredResponse.subsections)) {
-          structuredResponse.subsections = [structuredResponse.subsections];
-        }
-        
-        // Log which valid IDs are expected for the selected section
-        const sectionMap = {
-          about: ["profile", "bio", "expertise", "ai-expertise", "fullstack-expertise", "mobile-expertise"],
-          experience: ["sap", "sap-ai", "sap-flutter", "ziroh"],
-          skills: ["languages", "databases", "cloud", "dev-practices", "ai-ml"],
-          projects: ["ai-analyzer", "ai-live"],
-          education: ["masters", "bachelors"]
-        };
-        
-        if (structuredResponse.section && structuredResponse.section !== "none") {
-          const validIds = sectionMap[structuredResponse.section as keyof typeof sectionMap] || [];
-          console.log(`Valid IDs for section "${structuredResponse.section}":`, validIds);
-          
-          // Special handling for Flutter queries
-          const userQuery = processedMessages[processedMessages.length - 1].content.toLowerCase();
-          if (structuredResponse.section === "experience" && 
-              (userQuery.includes("flutter") || 
-               userQuery.includes("mobile") || 
-               userQuery.includes("dart") ||
-               userQuery.includes("cross-platform"))) {
-            console.log("Flutter-related query detected, ensuring sap-flutter is included");
-            if (!structuredResponse.subsections.includes("sap-flutter")) {
-              structuredResponse.subsections.push("sap-flutter");
-            }
-          }
-          
-          console.log("Matching subsections:", 
-            structuredResponse.subsections.filter((id: string) => validIds.includes(id))
-          );
-        }
-        
-        console.log("Final structured response (direct):", structuredResponse);
-        return NextResponse.json(structuredResponse);
-      } catch (parseError) {
-        console.error("Failed to parse JSON response (first case):", parseError);
-        
-        // Try an alternative approach - extract the JSON from the raw response
-        try {
-          // Get the candidate's content directly
-          const candidateContent = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
-          console.log("Candidate content (first case):", candidateContent);
-          
-          if (candidateContent) {
-            const structuredResponse = JSON.parse(candidateContent);
-            console.log("Parsed structured response:", structuredResponse);
-            
-            // Ensure subsections is always an array
-            if (!structuredResponse.subsections) {
-              structuredResponse.subsections = [];
-            } else if (!Array.isArray(structuredResponse.subsections)) {
-              structuredResponse.subsections = [structuredResponse.subsections];
-            }
-            
-            // Log which valid IDs are expected for the selected section
-            const sectionMap = {
-              about: ["profile", "bio", "expertise", "ai-expertise", "fullstack-expertise", "mobile-expertise"],
-              experience: ["sap", "sap-ai", "sap-flutter", "ziroh"],
-              skills: ["languages", "databases", "cloud", "dev-practices", "ai-ml"],
-              projects: ["ai-analyzer", "ai-live"],
-              education: ["masters", "bachelors"]
-            };
-            
-            if (structuredResponse.section && structuredResponse.section !== "none") {
-              const validIds = sectionMap[structuredResponse.section as keyof typeof sectionMap] || [];
-              console.log(`Valid IDs for section "${structuredResponse.section}":`, validIds);
-              
-              // Special handling for Flutter queries
-              const userQuery = processedMessages[processedMessages.length - 1].content.toLowerCase();
-              if (structuredResponse.section === "experience" && 
-                  (userQuery.includes("flutter") || 
-                   userQuery.includes("mobile") || 
-                   userQuery.includes("dart") ||
-                   userQuery.includes("cross-platform"))) {
-                console.log("Flutter-related query detected, ensuring sap-flutter is included");
-                if (!structuredResponse.subsections.includes("sap-flutter")) {
-                  structuredResponse.subsections.push("sap-flutter");
-                }
-              }
-              
-              console.log("Matching subsections:", 
-                structuredResponse.subsections.filter((id: string) => validIds.includes(id))
-              );
-            }
-            
-            console.log("Final structured response:", structuredResponse);
-            return NextResponse.json(structuredResponse);
-          } else {
-            throw new Error("No candidate content available");
-          }
-        } catch (secondError) {
-          console.error("Second parsing attempt failed (first case):", secondError);
-          
-          // Return a fallback response
-          return NextResponse.json({ 
-            response: "Sorry, I encountered an error processing your request. Please try again.",
-            section: "none",
-            subsections: []
-          }, { status: 200 });
-        }
-      }
-    } else {
-      // Normal case - convert messages to Gemini format
-      const history = processedMessages.slice(0, -1).map((msg) => ({
-        role: msg.role === "user" ? "user" : "model",
-        parts: [{ text: msg.content }],
-      }))
-
-      // Add context for structured output in the prompt
-      const contextPrompt = sharedPromptContent
+      });
 
       // Get the latest user message
-      const latestMessage = processedMessages[processedMessages.length - 1]
-
-      // Send the message and get the response with structured output
-      const result = await model.generateContent({
-        contents: [
-          ...history,
-          {
-            role: "user",
-            parts: [{ text: contextPrompt + "\n\nUser query: " + latestMessage.content }],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          topP: 0.8,
-          topK: 40,
-          maxOutputTokens: 10000,
-          responseMimeType: "application/json", 
-          responseSchema: responseSchema as Schema,
-        },
-      })
-
+      const latestMessage = processedMessages[processedMessages.length - 1];
+      
+      // Ensure the latest message is actually a user message
+      if (latestMessage.role !== "user") {
+        return NextResponse.json({ 
+          response: "I can only process messages from users. Please send a query as a user.",
+          section: "none",
+          subsections: []
+        }, { status: 400 });
+      }
+      
+      // Create the prompt with context for structured output
+      const contextPrompt = `${systemInstruction}\n${sharedPromptContent}\n\nUser query: ${latestMessage.parts[0].text}`;
+      
+      // Send the message
+      const result = await chat.sendMessage(contextPrompt);
+      
       // Log the raw response to help debug
-      console.log("Raw candidate response:", JSON.stringify(result.response.candidates?.[0]?.content));
+      console.log("Raw response:", result);
       
       try {
         // Access the response text properly
@@ -463,16 +322,13 @@ export async function POST(request: NextRequest) {
           console.warn("Empty response from Gemini API");
           
           // Try fallback approach
-          const fallbackResponse = await handleEmptyResponseFallback(
-            contextPrompt + "\n\nUser query: " + latestMessage.content
-          );
-          
+          const fallbackResponse = await handleEmptyResponseFallback(contextPrompt);
           return NextResponse.json(fallbackResponse);
         }
         
         // Try to parse the JSON
         const structuredResponse = JSON.parse(responseText);
-        console.log("Parsed structured response (direct):", structuredResponse);
+        console.log("Parsed structured response:", structuredResponse);
         
         // Ensure subsections is always an array
         if (!structuredResponse.subsections) {
@@ -495,7 +351,7 @@ export async function POST(request: NextRequest) {
           console.log(`Valid IDs for section "${structuredResponse.section}":`, validIds);
           
           // Special handling for Flutter queries
-          const userQuery = processedMessages[processedMessages.length - 1].content.toLowerCase();
+          const userQuery = latestMessage.parts[0].text.toLowerCase();
           if (structuredResponse.section === "experience" && 
               (userQuery.includes("flutter") || 
                userQuery.includes("mobile") || 
@@ -512,75 +368,24 @@ export async function POST(request: NextRequest) {
           );
         }
         
-        console.log("Final structured response (direct):", structuredResponse);
         return NextResponse.json(structuredResponse);
       } catch (parseError) {
         console.error("Failed to parse JSON response:", parseError);
         
-        // Try an alternative approach - extract the JSON from the raw response
-        try {
-          // Get the candidate's content directly
-          const candidateContent = result.response.candidates?.[0]?.content?.parts?.[0]?.text;
-          console.log("Candidate content:", candidateContent);
-          
-          if (candidateContent) {
-            const structuredResponse = JSON.parse(candidateContent);
-            console.log("Parsed structured response:", structuredResponse);
-            
-            // Ensure subsections is always an array
-            if (!structuredResponse.subsections) {
-              structuredResponse.subsections = [];
-            } else if (!Array.isArray(structuredResponse.subsections)) {
-              structuredResponse.subsections = [structuredResponse.subsections];
-            }
-            
-            // Log which valid IDs are expected for the selected section
-            const sectionMap = {
-              about: ["profile", "bio", "expertise", "ai-expertise", "fullstack-expertise", "mobile-expertise"],
-              experience: ["sap", "sap-ai", "sap-flutter", "ziroh"],
-              skills: ["languages", "databases", "cloud", "dev-practices", "ai-ml"],
-              projects: ["ai-analyzer", "ai-live"],
-              education: ["masters", "bachelors"]
-            };
-            
-            if (structuredResponse.section && structuredResponse.section !== "none") {
-              const validIds = sectionMap[structuredResponse.section as keyof typeof sectionMap] || [];
-              console.log(`Valid IDs for section "${structuredResponse.section}":`, validIds);
-              
-              // Special handling for Flutter queries
-              const userQuery = processedMessages[processedMessages.length - 1].content.toLowerCase();
-              if (structuredResponse.section === "experience" && 
-                  (userQuery.includes("flutter") || 
-                   userQuery.includes("mobile") || 
-                   userQuery.includes("dart") ||
-                   userQuery.includes("cross-platform"))) {
-                console.log("Flutter-related query detected, ensuring sap-flutter is included");
-                if (!structuredResponse.subsections.includes("sap-flutter")) {
-                  structuredResponse.subsections.push("sap-flutter");
-                }
-              }
-              
-              console.log("Matching subsections:", 
-                structuredResponse.subsections.filter((id: string) => validIds.includes(id))
-              );
-            }
-            
-            console.log("Final structured response:", structuredResponse);
-            return NextResponse.json(structuredResponse);
-          } else {
-            throw new Error("No candidate content available");
-          }
-        } catch (secondError) {
-          console.error("Second parsing attempt failed:", secondError);
-          
-          // Return a fallback response
-          return NextResponse.json({ 
-            response: "Sorry, I encountered an error processing your request. Please try again.",
-            section: "none",
-            subsections: []
-          }, { status: 200 });
-        }
+        // Return a fallback response
+        return NextResponse.json({ 
+          response: "Sorry, I encountered an error processing your request. Please try again.",
+          section: "none",
+          subsections: []
+        }, { status: 200 });
       }
+    } catch (error) {
+      console.error("Error generating response:", error);
+      return NextResponse.json({ 
+        response: "Sorry, I encountered an error. Please try again.",
+        section: "none",
+        subsections: []
+      }, { status: 200 });
     }
   } catch (error) {
     console.error("Error generating response:", error)
