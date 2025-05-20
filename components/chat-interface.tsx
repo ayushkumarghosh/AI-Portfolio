@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Send } from "lucide-react"
+import { Send, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -69,6 +69,21 @@ export default function ChatInterface({ onNavigate }: ChatInterfaceProps) {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
+
+  // Function to clear chat history
+  const clearChatHistory = () => {
+    const initialMessage = {
+      role: "assistant" as const,
+      content: "Hi there! I'm Ayush's portfolio assistant. Ask me anything about Ayush's experience, skills, or projects!",
+    };
+    
+    setMessages([initialMessage]);
+    
+    // Also update localStorage
+    if (typeof window !== "undefined") {
+      localStorage.setItem("chatMessages", JSON.stringify([initialMessage]));
+    }
+  };
 
   const handleSend = async () => {
     if (input.trim() === "") return
@@ -190,8 +205,18 @@ export default function ChatInterface({ onNavigate }: ChatInterfaceProps) {
         }
       `}</style>
       <div className="flex h-full flex-col bg-background border-r border-secondary/20">
-        <div className="flex items-center justify-between border-b border-secondary/20 px-4 py-3">
-          <h2 className="text-lg font-semibold text-primary">Chat with Portfolio</h2>
+        <div className="flex items-center border-b border-secondary/20 px-4 py-3">
+          <h2 className="text-lg font-semibold text-primary mr-2">Chat with Portfolio</h2>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-muted-foreground hover:text-destructive" 
+            onClick={clearChatHistory}
+            title="Clear chat history"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+          <div className="flex-1"></div>
         </div>
         <ScrollArea className="flex-1 p-4">
           <div className="flex flex-col gap-4 w-full">
