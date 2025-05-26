@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI, Schema } from "@google/generative-ai"
 import { type NextRequest, NextResponse } from "next/server"
+import { generateText, extractAssistantResponse, type Message as PollinationsMessage } from "../../../lib/pollinations"
 
 // Initialize the Gemini API
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API || "")
@@ -239,8 +240,8 @@ VERY IMPORTANT: When you mention a specific project in your response (like "AI D
 
 In your response, include:
 1. Your detailed yet accurate answer to the user's query about Ayush's professional background
-2. The most relevant main section
-3. ALL relevant subsections that apply to their query (you can provide multiple subsections when appropriate)
+2. Go through all the main sections and choose only the most relevant main section
+3. ALL relevant subsections under that main section that apply to their query (you can provide multiple subsections when appropriate)
 `
 
 // Valid subsection IDs by section for reference:
@@ -254,6 +255,9 @@ In your response, include:
 // education: masters, bachelors
 
 export async function POST(request: NextRequest) {
+  // Create a clone of the request that we can use in the catch block if needed
+  const requestClone = request.clone();
+  
   try {
     const { messages } = await request.json()
 
@@ -263,57 +267,83 @@ export async function POST(request: NextRequest) {
 
     // Get the model
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash-preview-04-17",
+      model: "gemini-2.5-flash-preview-05-20",
     })
 
     // Helper function to handle empty responses by falling back to unstructured generation
     async function handleEmptyResponseFallback(prompt: string) {
-      console.log("Attempting fallback generation without schema...");
-      
-      // Create a model without response schema for fallback
-      const fallbackModel = genAI.getGenerativeModel({ 
-        model: "gemini-2.5-flash-preview-04-17",
-      });
+      console.log("Attempting fallback generation using Pollinations API...");
       
       try {
-        // Try a simple generation
-        const fallbackResult = await fallbackModel.generateContent({
-          contents: [{ role: "user", parts: [{ text: prompt + "\n\nPlease respond in a JSON format with the following structure: { response: 'your answer here', section: 'relevant section name or none', subsections: ['relevant subsection names'] }" }] }],
-          generationConfig: {
-            temperature: 0.7,
-            topP: 0.8,
-            maxOutputTokens: 1000,
-          },
-        });
+        // Extract the user query from the prompt
+        const userQueryMatch = prompt.match(/User query: (.*)$/);
+        const userQuery = userQueryMatch ? userQueryMatch[1] : prompt;
         
-        const fallbackText = fallbackResult.response.text();
-        console.log("Fallback generation result:", fallbackText);
+        // Create system message with the portfolio context
+        const systemMessage: PollinationsMessage = {
+          role: "system",
+          content: `${sharedPromptContent}\nYou are Ayush's portfolio assistant. Answer the user's question about Ayush's professional background.
+          
+IMPORTANT: You must format your response as a valid JSON object with these exact fields:
+{
+  "response": "Your detailed answer to the user's query",
+  "section": "most_relevant_section_name", // one of: about, experience, skills, projects, education, none
+  "subsections": ["subsection1", "subsection2"] // array of relevant subsection IDs
+}
+
+DO NOT use "answer" or "main_section" fields. Use "response" and "section" instead.`
+        };
         
-        // Try to extract JSON from the text response
+        // Create the user message
+        const userMessage: PollinationsMessage = {
+          role: "user",
+          content: userQuery
+        };
+        
+        // Call Pollinations API
+        const result = await generateText([systemMessage, userMessage]);
+        const responseText = extractAssistantResponse(result);
+        
+        console.log("Pollinations API fallback result:", responseText);
+        
+        if (!responseText) {
+          return {
+            response: "I'm having trouble processing your request. Please try again later.",
+            section: "none",
+            subsections: []
+          };
+        }
+        
+        // Try to extract structured data if response includes JSON
         const jsonRegex = /\{[\s\S]*?\}/;
-        const match = fallbackText.match(jsonRegex);
+        const match = responseText.match(jsonRegex);
         
         if (match && match[0]) {
           try {
             const extractedJson = JSON.parse(match[0]);
-            return extractedJson;
+            // Map field names if they don't match expected schema
+            return {
+              response: extractedJson.response || extractedJson.answer || responseText,
+              section: extractedJson.section || extractedJson.main_section || "none",
+              subsections: Array.isArray(extractedJson.subsections) ? extractedJson.subsections : []
+            };
           } catch (e) {
             // If parsing fails, create a structured response from the text
             return {
-              response: fallbackText,
+              response: responseText,
               section: "none",
               subsections: []
             };
           }
         } else {
           return {
-            response: fallbackText,
+            response: responseText,
             section: "none",
             subsections: []
           };
         }
       } catch (fallbackError) {
-        console.error("Fallback generation failed:", fallbackError);
+        console.error("Pollinations API fallback failed:", fallbackError);
         return {
           response: "I'm having trouble processing your request. Please try again later.",
           section: "none",
@@ -460,23 +490,122 @@ export async function POST(request: NextRequest) {
       } catch (parseError) {
         console.error("Failed to parse JSON response:", parseError);
         
-        // Return a fallback response
-        return NextResponse.json({ 
-          response: "Sorry, I encountered an error processing your request. Please try again.",
-          section: "none",
-          subsections: []
-        }, { status: 200 });
+        // Use Pollinations API fallback for JSON parsing errors
+        const fallbackResponse = await handleEmptyResponseFallback(contextPrompt);
+        return NextResponse.json(fallbackResponse);
       }
     } catch (error) {
-      console.error("Error generating response:", error);
-      return NextResponse.json({ 
-        response: "Sorry, I encountered an error. Please try again.",
-        section: "none",
-        subsections: []
-      }, { status: 200 });
+      console.error("Error generating response with Gemini:", error);
+      
+      // Get the latest user message for fallback
+      const latestMessage = processedMessages[processedMessages.length - 1];
+      const contextPrompt = `${systemInstruction}\n${sharedPromptContent}\n\nUser query: ${latestMessage.parts[0].text}`;
+      
+      // Use Pollinations API fallback for any Gemini API errors
+      const fallbackResponse = await handleEmptyResponseFallback(contextPrompt);
+      return NextResponse.json(fallbackResponse);
     }
   } catch (error) {
     console.error("Error generating response:", error)
+    
+    // Define handleEmptyResponseFallback directly in this scope
+    const handleEmptyResponseFallback = async (prompt: string) => {
+      console.log("Attempting fallback generation using Pollinations API in outer catch...");
+      
+      try {
+        // Extract the user query from the prompt
+        const userQueryMatch = prompt.match(/User query: (.*)$/);
+        const userQuery = userQueryMatch ? userQueryMatch[1] : prompt;
+        
+        // Create system message with the portfolio context
+        const systemMessage: PollinationsMessage = {
+          role: "system",
+          content: `${sharedPromptContent}\nYou are Ayush's portfolio assistant. Answer the user's question about Ayush's professional background.
+          
+IMPORTANT: You must format your response as a valid JSON object with these exact fields:
+{
+  "response": "Your detailed answer to the user's query",
+  "section": "most_relevant_section_name", // one of: about, experience, skills, projects, education, none
+  "subsections": ["subsection1", "subsection2"] // array of relevant subsection IDs
+}
+
+DO NOT use "answer" or "main_section" fields. Use "response" and "section" instead.`
+        };
+        
+        // Create the user message
+        const userMessage: PollinationsMessage = {
+          role: "user",
+          content: userQuery
+        };
+        
+        // Call Pollinations API
+        const result = await generateText([systemMessage, userMessage]);
+        const responseText = extractAssistantResponse(result);
+        
+        if (!responseText) {
+          return {
+            response: "I'm having trouble processing your request. Please try again later.",
+            section: "none",
+            subsections: []
+          };
+        }
+        
+        // Try to extract structured data if response includes JSON
+        const jsonRegex = /\{[\s\S]*?\}/;
+        const match = responseText.match(jsonRegex);
+        
+        if (match && match[0]) {
+          try {
+            const extractedJson = JSON.parse(match[0]);
+            // Map field names if they don't match expected schema
+            return {
+              response: extractedJson.response || extractedJson.answer || responseText,
+              section: extractedJson.section || extractedJson.main_section || "none",
+              subsections: Array.isArray(extractedJson.subsections) ? extractedJson.subsections : []
+            };
+          } catch (e) {
+            // If parsing fails, create a structured response from the text
+            return {
+              response: responseText,
+              section: "none",
+              subsections: []
+            };
+          }
+        } else {
+          return {
+            response: responseText,
+            section: "none",
+            subsections: []
+          };
+        }
+      } catch (fallbackError) {
+        console.error("Outer catch Pollinations API fallback failed:", fallbackError);
+        return {
+          response: "I'm having trouble processing your request. Please try again later.",
+          section: "none",
+          subsections: []
+        };
+      }
+    };
+    
+    try {
+      // Get the request body again from clone
+      const body = await requestClone.json();
+      const userMessages = body.messages.filter((msg: any) => msg.role === "user");
+      
+      if (userMessages.length > 0) {
+        const latestUserMessage = userMessages[userMessages.length - 1].content;
+        const contextPrompt = `${sharedPromptContent}\n\nUser query: ${latestUserMessage}`;
+        
+        // Use Pollinations API fallback
+        const fallbackResponse = await handleEmptyResponseFallback(contextPrompt);
+        return NextResponse.json(fallbackResponse);
+      }
+    } catch (fallbackError) {
+      console.error("Final fallback attempt failed:", fallbackError);
+    }
+    
+    // Ultimate fallback if everything else fails
     return NextResponse.json({ 
       response: "Sorry, I encountered an error. Please try again.",
       section: "none",

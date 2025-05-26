@@ -13,7 +13,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 export async function generateChatResponse(previousMessages: ChatMessage[], userMessage: string): Promise<string> {
   try {
     // Get the model
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-04-17" })
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-05-20" })
 
     // Prepare the chat history
     const history = previousMessages.map((msg) => ({
