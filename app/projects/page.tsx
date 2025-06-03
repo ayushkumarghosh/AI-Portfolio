@@ -119,10 +119,10 @@ export default function ProjectsPage() {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-semibold mb-3 text-primary">Habit Tracker</h3>
                   <p className="mb-6 text-secondary">
-                    A minimalist application for tracking daily habits and building consistent routines. Features include streak tracking, data visualization, and progress analytics.
+                    Track daily habits with progress visualization. A minimalist application for building consistent routines with streak tracking and analytics.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["React", "TypeScript"].map((tech) => (
+                    {["Flutter", "SQLite", "Firebase"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -145,10 +145,10 @@ export default function ProjectsPage() {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-semibold mb-3 text-primary">Recipe Finder</h3>
                   <p className="mb-6 text-secondary">
-                    A web application that helps users find recipes based on ingredients they already have. Features include recipe search, favorites, and detailed cooking instructions.
+                    Input ingredients to fetch recipes from an API. Find recipes based on ingredients you already have, with favorites and detailed cooking instructions.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["JavaScript", "API Integration", "React", "Responsive Design"].map((tech) => (
+                    {["Flutter", "Spoonacular API"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -167,40 +167,14 @@ export default function ProjectsPage() {
               </Card>
             </div>
             <div>
-              <Card id="kanban-task-board" className="card-hover border border-secondary/20 h-full">
-                <CardContent className="p-6">
-                  <h3 className="text-2xl font-semibold mb-3 text-primary">Kanban Task Board</h3>
-                  <p className="mb-6 text-secondary">
-                    A drag-and-drop task management system based on the Kanban methodology. Helps visualize workflow, limit work-in-progress, and maximize efficiency.
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {["React", "Redux"].map((tech) => (
-                      <Badge key={tech} variant="secondary" className="bg-secondary text-white">
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-                  <a
-                    href="https://github.com/ayushkumarghosh/Kanban-Task-Board"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-primary hover:underline"
-                  >
-                    <Github className="h-4 w-4" />
-                    <span>View on GitHub</span>
-                  </a>
-                </CardContent>
-              </Card>
-            </div>
-            <div>
               <Card id="expense-splitter" className="card-hover border border-secondary/20 h-full">
                 <CardContent className="p-6">
-                  <h3 className="text-2xl font-semibold mb-3 text-primary">Expense Splitter</h3>
+                  <h3 className="text-2xl font-semibold mb-3 text-primary">QR Code Expense Splitter</h3>
                   <p className="mb-6 text-secondary">
-                    An application to track and split expenses among friends or roommates. Calculates who owes whom and simplifies debt settlement.
+                    Enter bill details, generate QR codes to split expenses with UPI links. Simplifies debt settlement among friends or roommates.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["React Native", "Firebase"].map((tech) => (
+                    {["Flutter", "QR Code Generator"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -219,14 +193,40 @@ export default function ProjectsPage() {
               </Card>
             </div>
             <div>
+              <Card id="kanban-task-board" className="card-hover border border-secondary/20 h-full">
+                <CardContent className="p-6">
+                  <h3 className="text-2xl font-semibold mb-3 text-primary">Kanban Task Board</h3>
+                  <p className="mb-6 text-secondary">
+                    Trello-like task board with drag and drop functionality. Helps visualize workflow, limit work-in-progress, and maximize efficiency.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {["Next.js", "TypeScript", "Tailwind CSS", "Zustand", "Firebase"].map((tech) => (
+                      <Badge key={tech} variant="secondary" className="bg-secondary text-white">
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+                  <a
+                    href="https://github.com/ayushkumarghosh/Kanban-Task-Board"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-primary hover:underline"
+                  >
+                    <Github className="h-4 w-4" />
+                    <span>View on GitHub</span>
+                  </a>
+                </CardContent>
+              </Card>
+            </div>
+            <div>
               <Card id="ai-daily-planner" className="card-hover border border-secondary/20 h-full">
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-semibold mb-3 text-primary">AI Daily Planner</h3>
                   <p className="mb-6 text-secondary">
-                    A smart daily planner that uses AI to optimize your schedule, suggest task prioritization, and improve productivity based on your working patterns.
+                    Mobile/Web app where users add goals and AI generates a daily plan. Optimizes schedules and improves productivity based on working patterns.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["Python", "GPT-4 API", "TensorFlow"].map((tech) => (
+                    {["Next.js", "TypeScript", "Tailwind CSS", "Gemini API", "Node.js"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -249,10 +249,10 @@ export default function ProjectsPage() {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-semibold mb-3 text-primary">AI Meeting Summary Tool</h3>
                   <p className="mb-6 text-secondary">
-                    An AI-powered application that transcribes meeting recordings, identifies key points, action items, and generates concise summaries.
+                    Upload audio or transcript to get summary, action points, and sentiment analysis. Transcribes meeting recordings and identifies key information.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["Python", "Whisper API", "NLP", "React"].map((tech) => (
+                    {["Next.js", "TypeScript", "Tailwind CSS", "Gemini API", "Whisper API"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -275,10 +275,10 @@ export default function ProjectsPage() {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-semibold mb-3 text-primary">AI-Powered Markdown Blog</h3>
                   <p className="mb-6 text-secondary">
-                    A markdown-based blogging platform with AI features like topic suggestions, content enhancement, and SEO optimization tools.
+                    Gemini helps write blog posts which can be saved, published, and viewed. Features topic suggestions, content enhancement, and SEO optimization.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["Next.js", "OpenAI API", "Tailwind CSS"].map((tech) => (
+                    {["Next.js", "TypeScript", "Tailwind CSS", "Node.js", "Gemini API"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -301,10 +301,10 @@ export default function ProjectsPage() {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-semibold mb-3 text-primary">Blog CMS Frontend</h3>
                   <p className="mb-6 text-secondary">
-                    A modern, responsive frontend for a blog content management system with rich text editing, image handling, and user management features.
+                    Create, edit, and publish markdown blogs. A modern, responsive frontend for a blog content management system.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["React", "Redux"].map((tech) => (
+                    {["Next.js", "TypeScript", "Tailwind CSS", "Markdown Editor"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -327,10 +327,10 @@ export default function ProjectsPage() {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-semibold mb-3 text-primary">Expense Tracker API</h3>
                   <p className="mb-6 text-secondary">
-                    A RESTful API for tracking expenses with features like categorization, budget limits, reports, and multi-user support.
+                    CRUD for transactions and category-wise reports. A RESTful API for tracking expenses with budget limits and multi-user support.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["Node.js", "Express", "MongoDB", "JWT Authentication"].map((tech) => (
+                    {["Spring Boot", "PostgreSQL", "Swagger"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -353,10 +353,10 @@ export default function ProjectsPage() {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-semibold mb-3 text-primary">GitHub Profile Visualizer</h3>
                   <p className="mb-6 text-secondary">
-                    A web application that creates visual representations of GitHub profiles, highlighting repositories, contributions, and activity trends.
+                    Input GitHub username to show stats and activity graphs. Highlights repositories, contributions, and activity trends.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["React","GitHub API"].map((tech) => (
+                    {["Next.js", "TypeScript", "Tailwind CSS", "GitHub GraphQL API"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -377,12 +377,12 @@ export default function ProjectsPage() {
             <div>
               <Card id="notes-app-backend" className="card-hover border border-secondary/20 h-full">
                 <CardContent className="p-6">
-                  <h3 className="text-2xl font-semibold mb-3 text-primary">Notes App Backend</h3>
+                  <h3 className="text-2xl font-semibold mb-3 text-primary">Notes App with JWT Auth</h3>
                   <p className="mb-6 text-secondary">
-                    A robust backend for a notes application with features like user authentication, note CRUD operations, tagging, and search functionality.
+                    API for taking notes with user login. Features note CRUD operations, tagging, and search functionality.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["Node.js", "Express", "MongoDB", "RESTful API"].map((tech) => (
+                    {["Spring Boot", "Spring Security", "PostgreSQL"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -405,10 +405,10 @@ export default function ProjectsPage() {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-semibold mb-3 text-primary">Personal Knowledge Base</h3>
                   <p className="mb-6 text-secondary">
-                    A personal knowledge management system with note-taking, concept linking, and knowledge graph visualization to build a digital second brain.
+                    Store and query notes with natural language. A personal knowledge management system with concept linking and knowledge graph visualization.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["React"].map((tech) => (
+                    {["Next.js", "TypeScript", "Tailwind CSS", "Spring Boot", "Gemini API"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -431,10 +431,10 @@ export default function ProjectsPage() {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-semibold mb-3 text-primary">Resume Analyzer</h3>
                   <p className="mb-6 text-secondary">
-                    An AI-powered tool that analyzes resumes, extracts key information, and provides suggestions for improvements based on job postings.
+                    Upload resume (PDF), get feedback on formatting, grammar, and match with a job JD. Extracts key information and provides suggestions for improvements.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["Python", "NLP", "Flask"].map((tech) => (
+                    {["Next.js", "TypeScript", "Tailwind CSS", "Gemini API", "Node.js"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -457,10 +457,10 @@ export default function ProjectsPage() {
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-semibold mb-3 text-primary">URL Shortener</h3>
                   <p className="mb-6 text-secondary">
-                    A service that creates shortened URLs with analytics tracking for click-through rates, geographic data, and referrer information.
+                    Simple backend for generating short URLs. Creates shortened links with optional analytics tracking.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["Express", "MongoDB", "Redis"].map((tech) => (
+                    {["Node.js", "Express", "MongoDB"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
@@ -481,12 +481,12 @@ export default function ProjectsPage() {
             <div>
               <Card id="webhook-listener" className="card-hover border border-secondary/20 h-full">
                 <CardContent className="p-6">
-                  <h3 className="text-2xl font-semibold mb-3 text-primary">Webhook Listener</h3>
+                  <h3 className="text-2xl font-semibold mb-3 text-primary">Webhook Listener & Notifier</h3>
                   <p className="mb-6 text-secondary">
-                    A configurable webhook receiver service that processes incoming events, validates payloads, and triggers customizable actions or notifications.
+                    Listen to GitHub/Stripe webhooks and notify via Email/Slack. Validates payloads and triggers customizable actions.
                   </p>
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {["Node.js", "Express", "WebSockets", "Queue System"].map((tech) => (
+                    {["Node.js", "Express", "Nodemailer"].map((tech) => (
                       <Badge key={tech} variant="secondary" className="bg-secondary text-white">
                         {tech}
                       </Badge>
